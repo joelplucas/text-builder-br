@@ -6,6 +6,12 @@ package com.lucass;
  */
 public class App {
     public static void main(String[] args) {
-        System.out.println("NOSSO ENDEREÇO IP = " + args[0]);
+        String msg = "NOSSO ENDEREÇO IP = ";
+        if(args.length > 0) {
+            msg += args[0];
+        } else {
+            msg += "NULL";
+        }
+        System.out.println(msg);
     }
 }
