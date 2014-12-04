@@ -25,7 +25,7 @@ public class App {
         OAuthConsumer consumer = new CommonsHttpOAuthConsumer(ConsumerKey, ConsumerSecret);
  
         consumer.setTokenWithSecret(AccessToken, AccessSecret);
-        HttpGet request = new HttpGet("http://api.twitter.com/1.1/followers/ids.json?cursor=-1&screen_name=josdirksen");
+        HttpGet request = new HttpGet("https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=joelplucas");
         consumer.sign(request);
  
         HttpClient client = new DefaultHttpClient();
