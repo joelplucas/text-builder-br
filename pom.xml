@@ -68,7 +68,7 @@
             <configuration>
               <archive>
                     <manifest>
-                        <mainClass>com.lucass.App</mainClass>
+                        <mainClass>com.lucass.crawler.CrawlerStarter</mainClass>
                     </manifest>
               </archive>
             </configuration>
