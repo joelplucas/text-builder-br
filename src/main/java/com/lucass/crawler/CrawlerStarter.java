@@ -40,7 +40,7 @@ public class CrawlerStarter {
         String url = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=joelplucas";
         CrawlerStarter crawler = new CrawlerStarter();
         crawler.crawlTweets(url);
-        crawler.printTweetTexts();
+        //crawler.printTweetTexts();
     }
     
     public CrawlerStarter() {
@@ -56,6 +56,9 @@ public class CrawlerStarter {
     public void crawlTweets(String url) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, IOException {
         List<Team> teamsToCrawl = getTeamsFromDB();
         
+               for(Team tweet : teamsToCrawl) {
+            System.out.println(tweet.getName());
+        }
         HttpGet request = new HttpGet(url);
         consumer.sign(request);
         
