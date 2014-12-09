@@ -1,6 +1,11 @@
 package com.lucass.crawler;
  
+import com.google.code.morphia.Datastore;
 import com.google.gson.Gson;
+import com.lucass.model.Team;
+import com.lucass.model.Tweet;
+import com.lucass.model.UserTweets;
+import com.lucass.utils.MongoDBConnector;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +54,8 @@ public class CrawlerStarter {
     }
     
     public void crawlTweets(String url) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, IOException {
+        List<Team> teamsToCrawl = getTeamsFromDB();
+        
         HttpGet request = new HttpGet(url);
         consumer.sign(request);
         
@@ -67,5 +74,13 @@ public class CrawlerStarter {
         for(Tweet tweet : tweets) {
             System.out.println(tweet.getText());
         }
+    }
+    
+    private List<Team> getTeamsFromDB() {
+        Datastore ds = MongoDBConnector.getDatastore();
+        List<Team> teams = ds.createQuery(Team.class).asList();
+        
+        MongoDBConnector.closeMongoDB(ds);
+        return teams;
     }
 }

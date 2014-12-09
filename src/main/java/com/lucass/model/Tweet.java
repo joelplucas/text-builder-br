@@ -1,6 +1,4 @@
-package com.lucass.crawler;
-
-import java.util.Date;
+package com.lucass.model;
 
 public class Tweet {
     

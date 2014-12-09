@@ -51,6 +51,18 @@
       <version>1.7.1</version>
     </dependency>    
     
+    <dependency>
+        <groupId>org.mongodb</groupId>
+        <artifactId>mongo-java-driver</artifactId>
+        <version>2.11.2</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.google.code.morphia</groupId>
+	<artifactId>morphia</artifactId>
+	<version>0.99</version>
+    </dependency>
+    
   </dependencies>
 
   <build>
@@ -77,10 +89,14 @@
   </build>
   
   <repositories>
-     <repository>
+    <repository>
+	<id>Morphia Repository</id>
+	<url>http://morphia.googlecode.com/svn/mavenrepo/</url>
+    </repository>
+    <repository>
 	<id>Maven Repository</id>
 	<url>http://mvnrepository.com/artifact/</url>
-     </repository>
+    </repository>
   </repositories>
 
 </project>
