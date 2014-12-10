@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
 
@@ -32,6 +33,7 @@ public class PopulateTeams {
         
         ds = MongoDBConnector.getDatastore();
         gson = new Gson();
+        teams = new ArrayList<Team>();
         
     }
     

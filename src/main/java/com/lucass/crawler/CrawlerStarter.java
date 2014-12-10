@@ -55,8 +55,7 @@ public class CrawlerStarter {
     
     public void crawlTweets(String url) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, IOException {
         List<Team> teamsToCrawl = getTeamsFromDB();
-        
-               for(Team tweet : teamsToCrawl) {
+        for(Team tweet : teamsToCrawl) {
             System.out.println(tweet.getName());
         }
         HttpGet request = new HttpGet(url);
