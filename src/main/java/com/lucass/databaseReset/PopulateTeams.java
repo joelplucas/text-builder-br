@@ -24,6 +24,7 @@ public class PopulateTeams {
         
         PopulateTeams popTeams = new PopulateTeams();
         popTeams.getTeamsFromJSON();
+        popTeams.dropTeamsOnDB();
         popTeams.saveTeamsOnDB();
         popTeams.closeConection();
         
@@ -47,8 +48,13 @@ public class PopulateTeams {
 
     }    
 
+    private void dropTeamsOnDB() {
+        
+    }
+
     private void saveTeamsOnDB() {
         for(Team team : teams) {
+            System.out.println(team.getName());
             ds.save(team);
         }                
     }

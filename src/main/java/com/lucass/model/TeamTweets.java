@@ -4,11 +4,11 @@ import com.lucass.model.Tweet;
 import java.io.Serializable;
 import java.util.List;
  
-public class UserTweets {
+public class TeamTweets {
  
     private List<Tweet> tweets;
 
-    public UserTweets() {
+    public TeamTweets() {
         
     }
     
