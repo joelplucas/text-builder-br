@@ -5,11 +5,8 @@ import com.google.gson.Gson;
 import com.lucass.model.Team;
 import com.lucass.model.Tweet;
 import com.lucass.model.TeamTweets;
-import com.lucass.model.Teams;
 import com.lucass.utils.MongoDBConnector;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import oauth.signpost.OAuthConsumer;
@@ -75,15 +72,14 @@ public class CrawlerStarter {
 
         for(Team team : teams) {
             
-            for(String word : team.getWords()) {
-                
+            for(String word : team.getWords().subList(1, 2)) {                
                 String url = TwitterBaseUrl + "search/tweets.json?q=" + word;
                 System.out.println(url);
                 
                 HttpGet request = new HttpGet(url);
                 consumer.sign(request);
                 
-                HttpResponse response = client.execute(request);       
+                HttpResponse response = client.execute(request);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if(statusCode == 200) {
                     String reponseText = "{\"tweets\": " + IOUtils.toString(response.getEntity().getContent()) + "}";
@@ -91,6 +87,10 @@ public class CrawlerStarter {
                     List<Tweet> tweetsFromUser = userTweets.getTweets();
                     tweets.addAll(tweetsFromUser);
                 }
+                if(response.getEntity() != null) {
+                    response.getEntity().consumeContent();
+                }
+
             }  
             
         }        
