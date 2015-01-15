@@ -72,7 +72,7 @@ public class CrawlerStarter {
 
         for(Team team : teams) {
             
-            for(String word : team.getWords().subList(1, 2)) {                
+            for(String word : team.getWords()) {                
                 String url = TwitterBaseUrl + "search/tweets.json?q=" + word;
                 System.out.println(url);
                 
