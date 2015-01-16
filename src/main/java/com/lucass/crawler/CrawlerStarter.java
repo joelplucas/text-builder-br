@@ -82,7 +82,7 @@ public class CrawlerStarter {
                 HttpResponse response = client.execute(request);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if(statusCode == 200) {
-                    String reponseText = "{\"tweets\": " + IOUtils.toString(response.getEntity().getContent()) + "}";
+                    String reponseText = IOUtils.toString(response.getEntity().getContent());
                     TeamTweets userTweets = gson.fromJson(reponseText, TeamTweets.class);
                     List<Tweet> tweetsFromUser = userTweets.getTweets();
                     tweets.addAll(tweetsFromUser);
