@@ -8,6 +8,8 @@ import com.lucass.model.Tweet;
 import com.lucass.utils.MongoDBConnector;
 import java.util.ArrayList;
 import java.util.List;
+import twitter4j.Query;
+import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -50,9 +52,12 @@ public class CrawlerStarterTwitter4j {
     private List<Tweet> getTeamsTweets(List<Team> teams) {
         List<Tweet> tweets = new ArrayList<Tweet>();
         for(Team team : teams) {
-            for(String userId : team.getWords()) {     
+            for(String tag : team.getWords()) {     
                 try {
-                    for(Status status : twitter.getUserTimeline(userId)) {
+                    Query query = new Query(tag);
+                    query.setCount(100);
+                    QueryResult result = twitter.search(query);
+                    for(Status status : result.getTweets()) {
                         String a = status.getText();
                         System.out.println(a);
                         /*TeamTweets userTweets = gson.fromJson(status.getText(), TeamTweets.class);
@@ -60,7 +65,7 @@ public class CrawlerStarterTwitter4j {
                         tweets.addAll(tweetsFromUser);*/
                     }
                 } catch (TwitterException ex) {
-                    System.out.println("Twitter error for " + userId);
+                    System.out.println("Twitter error for " + tag);
                     ex.printStackTrace();                    
                 }
             }

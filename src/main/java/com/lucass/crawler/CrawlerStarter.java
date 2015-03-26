@@ -31,7 +31,7 @@ public class CrawlerStarter {
    
     private Gson gson;
     private HttpClient client;
-    private CommonsHttpOAuthConsumer consumer;
+    private OAuthConsumer consumer;
     private Datastore ds;
     
     private List<Tweet> tweets;
@@ -73,7 +73,7 @@ public class CrawlerStarter {
         for(Team team : teams) {
             
             for(String word : team.getWords()) {                
-                String url = TwitterBaseUrl + "search/tweets.json?q=" + word;
+                String url = TwitterBaseUrl + "search/tweets.json?q=" + word +"&include_my_retweet=true&include_entities=true";
                 System.out.println(url);
                 
                 HttpGet request = new HttpGet(url);
