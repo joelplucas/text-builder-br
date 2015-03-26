@@ -52,25 +52,49 @@ public class CrawlerStarterTwitter4j {
     private List<Tweet> getTeamsTweets(List<Team> teams) {
         List<Tweet> tweets = new ArrayList<Tweet>();
         for(Team team : teams) {
-            for(String tag : team.getWords()) {     
-                try {
-                    Query query = new Query(tag);
-                    query.setCount(100);
-                    QueryResult result = twitter.search(query);
-                    for(Status status : result.getTweets()) {
-                        String a = status.getText();
-                        System.out.println(a);
-                        /*TeamTweets userTweets = gson.fromJson(status.getText(), TeamTweets.class);
-                        List<Tweet> tweetsFromUser = userTweets.getTweets();
-                        tweets.addAll(tweetsFromUser);*/
-                    }
-                } catch (TwitterException ex) {
-                    System.out.println("Twitter error for " + tag);
-                    ex.printStackTrace();                    
-                }
+            
+            long minimumId = 581040785199665200L;
+            
+            List<Status> tweetsStatus = new ArrayList<Status>();
+            
+            for(String tag : team.getWords()) {  
+                System.out.println(tag);
+                getTweetsByTag(tweetsStatus, tag, minimumId, -1);
             }
+            System.out.println(tweetsStatus.size());
         }
         return tweets;
+    }
+    
+    private void getTweetsByTag(List<Status> tweets, String tag, long minimumId, long maximumId) {
+        try {
+            Query query = new Query(tag);
+            query.setCount(100);
+            query.setLang("pt");
+            query.setResultType(Query.ResultType.recent);
+            query.setSinceId(minimumId);
+            if(maximumId > 0) query.setMaxId(maximumId);
+
+            QueryResult result = twitter.search(query);
+            tweets.addAll(result.getTweets());
+            if(result.getTweets().size() == 100) {
+                long lastId = result.getTweets().get(99).getId();
+                getTweetsByTag(tweets, tag, minimumId, lastId);
+            }
+            //for(Status status : result.getTweets()) {
+                //String a = status.getText();
+                //long id = status.getId();
+                //System.out.println(query);
+                //System.out.println(a);
+                //System.out.println(id);
+                /*TeamTweets userTweets = gson.fromJson(status.getText(), TeamTweets.class);
+                List<Tweet> tweetsFromUser = userTweets.getTweets();
+                tweets.addAll(tweetsFromUser);*/
+            //}
+        } catch (TwitterException ex) {
+            System.out.println("Twitter error for " + tag);
+            ex.printStackTrace();                    
+        }
     }
 
     
