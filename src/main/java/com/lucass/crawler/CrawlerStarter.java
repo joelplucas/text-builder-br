@@ -31,7 +31,7 @@ public class CrawlerStarter {
    
     private Gson gson;
     private HttpClient client;
-    private OAuthConsumer consumer;
+    private CommonsHttpOAuthConsumer consumer;
     private Datastore ds;
     
     private List<Tweet> tweets;
