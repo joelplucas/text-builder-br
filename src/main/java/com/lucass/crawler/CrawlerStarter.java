@@ -1,105 +1,108 @@
 package com.lucass.crawler;
- 
+
 import com.google.code.morphia.Datastore;
 import com.google.gson.Gson;
 import com.lucass.model.Team;
-import com.lucass.model.Tweet;
-import com.lucass.model.TeamTweets;
+import com.lucass.model.Tweets;
 import com.lucass.utils.MongoDBConnector;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
-import oauth.signpost.exception.OAuthCommunicationException;
-import oauth.signpost.exception.OAuthExpectationFailedException;
-import oauth.signpost.exception.OAuthMessageSignerException;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
 
 public class CrawlerStarter {
-   
-    private static String AccessToken = "2891460417-1WMZPDxcu7oQigR4MkUo75y3BZqcRjORRgY5XFU";
-    private static String AccessSecret = "jl5mr736jo50zZZfGqu2m67uo3v5wOZR7BjWr6EPz0Zmp";
-    private static String ConsumerKey = "AeidfIbX8t5taGVVQ1FCJL89p";
-    private static String ConsumerSecret = "d07jJ0Wr062cM59DcKQ2uY5M44EhMlOUrWfrUvKrbnD8i1dxQi";
+    private final String CONSUMER_KEY = "AeidfIbX8t5taGVVQ1FCJL89p";
+    private final String CONSUMER_KEY_SECRET = "d07jJ0Wr062cM59DcKQ2uY5M44EhMlOUrWfrUvKrbnD8i1dxQi";
+    private final String ACCESS_TOKEN = "2891460417-1WMZPDxcu7oQigR4MkUo75y3BZqcRjORRgY5XFU";
+    private final String ACCESS_TOKEN_SECRET = "jl5mr736jo50zZZfGqu2m67uo3v5wOZR7BjWr6EPz0Zmp";
     
-    private static String TwitterBaseUrl = "https://api.twitter.com/1.1/";
-   
     private Gson gson;
-    private HttpClient client;
-    private OAuthConsumer consumer;
     private Datastore ds;
-    
-    private List<Tweet> tweets;
-    private List<Team> teams;
-    
-    /**
-     * @param args
-    */
-    public static void main(String[] args) throws Exception {
-        
-        CrawlerStarter crawler = new CrawlerStarter();
-        crawler.getTeamsFromDB();
-        crawler.getTeamsTweets();
-        crawler.closeConection();
-   
-    }
+    private Twitter twitter;
+    private List<Tweets> tweets;
     
     public CrawlerStarter() {
+        twitter = new TwitterFactory().getInstance();
         ds = MongoDBConnector.getDatastore();
-        
         gson = new Gson();
-        tweets = new ArrayList<Tweet>();  
-        teams = new ArrayList<Team>();  
-
-        consumer = new CommonsHttpOAuthConsumer(ConsumerKey, ConsumerSecret);
-        consumer.setTokenWithSecret(AccessToken, AccessSecret);
-        
-        client = new DefaultHttpClient();
+    }
+    
+    public static void main(String[] args) throws Exception {    
+        CrawlerStarter crawler = new CrawlerStarter();
+        crawler.run();
     }
 
+    public void run() {
+        twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_KEY_SECRET);
+        AccessToken accessToken = new AccessToken(ACCESS_TOKEN, ACCESS_TOKEN_SECRET);
+        twitter.setOAuthAccessToken(accessToken);
+        
+        List<Team> teams = getTeams(ds);
+        tweets = getTeamsTweets(teams);
+        
+        System.out.println(tweets.size());        
+    }
     
-    private List<Team> getTeamsFromDB() {
-        teams = ds.createQuery(Team.class).asList();       
+    private List<Tweets> getTeamsTweets(List<Team> teams) {
+        List<Tweets> tweets = new ArrayList<Tweets>();
+        for(Team team : teams) {            
+            long minimumId = 581040785199665200L;
+            List<Status> tweetsStatus = new ArrayList<Status>();
+            
+            for(String tag : team.getWords()) {  
+                System.out.println(tag);
+                tweetsStatus = getTweetsByTag(tweetsStatus, tag, minimumId, -1);
+                Tweets teamTweets = new Tweets(minimumId, tweetsStatus, tag);
+                ds.save(teamTweets);
+            }
+            System.out.println(tweetsStatus.size());
+        }
+        return tweets;
+    }
+    
+    private List<Status> getTweetsByTag(List<Status> tweetsStatus, String tag, long minimumId, long maximumId) {
+        try {
+            Query query = new Query(tag);
+            query.setCount(100);
+            query.setLang("pt");
+            query.setResultType(Query.ResultType.recent);
+            query.setSinceId(minimumId);
+            if(maximumId > 0) {
+                query.setMaxId(maximumId);
+            }
+
+            QueryResult result = twitter.search(query);
+            tweetsStatus.addAll(result.getTweets());
+            if(result.getTweets().size() == 100) {
+                long lastId = result.getTweets().get(99).getId();
+                tweetsStatus = getTweetsByTag(tweetsStatus, tag, minimumId, lastId);
+            }
+            //for(Status status : result.getTweets()) {
+                //String a = status.getText();
+                //long id = status.getId();
+                //System.out.println(query);
+                //System.out.println(a);
+                //System.out.println(id);
+                /*TeamTweets userTweets = gson.fromJson(status.getText(), TeamTweets.class);
+                List<Tweet> tweetsFromUser = userTweets.getTweets();
+                tweets.addAll(tweetsFromUser);*/
+            //}
+        } catch (TwitterException ex) {
+            System.out.println("Twitter error for " + tag);
+            ex.printStackTrace();                    
+        }
+        
+        return tweetsStatus;
+    }
+    
+    private List<Team> getTeams(Datastore ds) {
+        List<Team> teams = ds.createQuery(Team.class).asList();       
         return teams;
     }
 
-    private void getTeamsTweets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, IOException {
-
-        for(Team team : teams) {
-            
-            for(String word : team.getWords()) {                
-                String url = TwitterBaseUrl + "search/tweets.json?q=" + word +"&include_my_retweet=true&include_entities=true";
-                System.out.println(url);
-                
-                HttpGet request = new HttpGet(url);
-                consumer.sign(request);
-                
-                HttpResponse response = client.execute(request);
-                int statusCode = response.getStatusLine().getStatusCode();
-                if(statusCode == 200) {
-                    String reponseText = IOUtils.toString(response.getEntity().getContent());
-                    TeamTweets userTweets = gson.fromJson(reponseText, TeamTweets.class);
-                    List<Tweet> tweetsFromUser = userTweets.getTweets();
-                    tweets.addAll(tweetsFromUser);
-                }
-                if(response.getEntity() != null) {
-                    response.getEntity().consumeContent();
-                }
-
-            }  
-            
-        }        
-
-    }
-    
-    private void closeConection() {
-        MongoDBConnector.closeMongoDB(ds);
-    }
-
-  
 }
