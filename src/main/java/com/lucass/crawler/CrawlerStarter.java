@@ -3,10 +3,12 @@ package com.lucass.crawler;
 import com.google.code.morphia.Datastore;
 import com.google.gson.Gson;
 import com.lucass.model.Team;
-import com.lucass.model.Tweets;
+import com.lucass.model.Tweet;
 import com.lucass.utils.MongoDBConnector;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import org.bson.types.ObjectId;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
@@ -24,7 +26,7 @@ public class CrawlerStarter {
     private Gson gson;
     private Datastore ds;
     private Twitter twitter;
-    private List<Tweets> tweets;
+    private List<Tweet> tweets;
     
     public CrawlerStarter() {
         twitter = new TwitterFactory().getInstance();
@@ -48,25 +50,45 @@ public class CrawlerStarter {
         System.out.println(tweets.size());        
     }
     
-    private List<Tweets> getTeamsTweets(List<Team> teams) {
-        List<Tweets> tweets = new ArrayList<Tweets>();
-        for(Team team : teams) {            
-            long minimumId = 581040785199665200L;
+    private List<Tweet> getTeamsTweets(List<Team> teams) {
+        List<Tweet> tweets = new ArrayList<Tweet>();
+        for(Team team : teams) {     
+            ObjectId teamId = team.getId();      
+            long minimumId = 581140785199665200L;
+            if(team.getLastId() != 0) minimumId = team.getLastId() + 1;
             List<Status> tweetsStatus = new ArrayList<Status>();
             
+            System.out.println(team.getName());
+            
+            int newTweetsCount = 0;
+            
             for(String tag : team.getWords()) {  
-                System.out.println(tag);
+                System.out.printf(" - %s", tag);
                 tweetsStatus = getTweetsByTag(tweetsStatus, tag, minimumId, -1);
-                Tweets teamTweets = new Tweets(minimumId, tweetsStatus, tag);
-                ds.save(teamTweets);
+                System.out.printf(" (%d)\n", (tweetsStatus.size() - newTweetsCount));
+                newTweetsCount = tweetsStatus.size();
             }
-            System.out.println(tweetsStatus.size());
+            
+            System.out.printf("Total de Novos Tweets: %d\n\n", newTweetsCount);
+            
+            if(newTweetsCount > 0) {
+                saveTweets(tweetsStatus, teamId);
+                long lastId = 0;
+                for(Status status : tweetsStatus) {
+                    if(status.getId() > lastId) {
+                        lastId = status.getId();
+                    }
+                }
+                team.setLastId(lastId);
+                ds.save(team);
+            }
         }
         return tweets;
     }
     
     private List<Status> getTweetsByTag(List<Status> tweetsStatus, String tag, long minimumId, long maximumId) {
         try {
+            System.out.printf(".");
             Query query = new Query(tag);
             query.setCount(100);
             query.setLang("pt");
@@ -98,6 +120,14 @@ public class CrawlerStarter {
         }
         
         return tweetsStatus;
+    }
+    
+    private void saveTweets(List<Status> tweetsStatus, ObjectId teamId) {
+        
+        for(Status status : tweetsStatus) {
+            Tweet newTweet = new Tweet(status.getId(), status.getText(), teamId, status.getCreatedAt());
+            ds.save(newTweet);
+        }
     }
     
     private List<Team> getTeams(Datastore ds) {
