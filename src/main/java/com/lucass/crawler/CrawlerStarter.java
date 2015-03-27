@@ -54,8 +54,7 @@ public class CrawlerStarter {
         List<Tweet> tweets = new ArrayList<Tweet>();
         for(Team team : teams) {     
             ObjectId teamId = team.getId();      
-            long minimumId = 581140785199665200L;
-            if(team.getLastId() != 0) minimumId = team.getLastId() + 1;
+            long minimumId = team.getLastId() + 1;
             List<Status> tweetsStatus = new ArrayList<Status>();
             
             System.out.println(team.getName());
@@ -90,14 +89,14 @@ public class CrawlerStarter {
         try {
             System.out.printf(".");
             Query query = new Query(tag);
-            query.setCount(100);
             query.setLang("pt");
             query.setResultType(Query.ResultType.recent);
-            query.setSinceId(minimumId);
-            if(maximumId > 0) {
-                query.setMaxId(maximumId);
+            if(minimumId > 1) {
+                query.setSinceId(minimumId);
+                query.setCount(100);
             }
-
+            if(maximumId > 0) query.setMaxId(maximumId);
+            
             QueryResult result = twitter.search(query);
             tweetsStatus.addAll(result.getTweets());
             if(result.getTweets().size() == 100) {
