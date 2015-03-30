@@ -1,7 +1,6 @@
 package com.lucass.databaseReset;
 
 import com.google.code.morphia.Datastore;
-import com.google.code.morphia.query.Query;
 import com.google.gson.Gson;
 import com.lucass.model.Team;
 import com.lucass.model.Teams;
@@ -50,6 +49,7 @@ public class PopulateTeams {
     }    
 
     private void dropTeamsOnDB() {
+        ds.delete(ds.createQuery(Team.class));
     }
 
     private void saveTeamsOnDB() {

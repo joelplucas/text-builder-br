@@ -10,7 +10,7 @@ import org.bson.types.ObjectId;
 public class Team {
     
     @Id
-    private ObjectId _id;
+    private ObjectId _id = new ObjectId();
     
     @Property
     private String name;
@@ -27,6 +27,10 @@ public class Team {
 
     public ObjectId getId() {
         return _id;
+    }
+    
+    public void setId(ObjectId id) {
+        this._id = id;
     }
     
     public String getName() {

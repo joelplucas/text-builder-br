@@ -6,7 +6,6 @@ import com.lucass.model.Team;
 import com.lucass.model.Tweet;
 import com.lucass.utils.MongoDBConnector;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.bson.types.ObjectId;
 import twitter4j.Query;
