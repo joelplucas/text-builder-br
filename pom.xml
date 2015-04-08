@@ -73,12 +73,13 @@
 
   <build>
     <plugins>
-        <plugin>            
-            <artifactId>maven-assembly-plugin</artifactId>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>2.5.1</version>
             <configuration>
                 <source>1.7</source>
                 <target>1.7</target>
-                <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
             </configuration>
         </plugin>
         <plugin>
@@ -95,28 +96,28 @@
               <target>1.7</target>
             </configuration>
         </plugin>
-
-         <plugin>
-		    <artifactId>maven-assembly-plugin</artifactId>
-		    <version>2.4</version>
-		    <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
-		    	<finalName>sentiment-soccer</finalName>
-		        <descriptorRefs>
-		            <descriptorRef>jar-with-dependencies</descriptorRef>
-		        </descriptorRefs>
-		    </configuration>
-		    <executions>
-		        <execution>
-		            <id>make-assembly</id>
-		            <phase>package</phase>
-		            <goals>
-		                <goal>single</goal>
-		            </goals>
-		        </execution>
-		    </executions>
-		</plugin>
+        <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.4</version>
+            <configuration>
+                <source>1.7</source>
+                <target>1.7</target>
+                <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
+                <finalName>sentiment-soccer</finalName>
+                <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>make-assembly</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>single</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
     </plugins>
   </build>
   
