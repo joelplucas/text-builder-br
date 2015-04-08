@@ -1,24 +1,28 @@
 {  
    "teams":[  
       {  
-         "name":"Gremio",
+         "name":"Grêmio",
          "words":[  
-            "@gremio_oficial",
-            "gremio"
+            "@gremiooficial",
+            "gremio tricolor",
+            "gremio gol",
+            "gremio futebol"
          ]
       },
       {  
-         "name":"Guarani",
+         "name":"Corinthians",
          "words":[  
-            "@guarani_oficial",
-            "guarani",
-            "bugrao"
+            "@corinthians",
+            "corinthians",
+            "timao gol",
+            "timao futebol"
          ]
       },
       {  
-         "name":"Santos",
+         "name":"Flamengo",
          "words":[  
-            "@santos_oficial"
+            "@flamengo",
+            "flamengo"
          ]
       }
    ]
