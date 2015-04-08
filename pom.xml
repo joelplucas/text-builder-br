@@ -73,9 +73,11 @@
 
   <build>
     <plugins>
-        <plugin>
+        <plugin>            
             <artifactId>maven-assembly-plugin</artifactId>
             <configuration>
+                <source>1.7</source>
+                <target>1.7</target>
                 <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
             </configuration>
         </plugin>
@@ -89,6 +91,8 @@
                         <mainClass>com.lucass.crawler.CrawlerStarter</mainClass>
                     </manifest>
               </archive>
+              <source>1.7</source>
+              <target>1.7</target>
             </configuration>
         </plugin>
 
@@ -96,6 +100,8 @@
 		    <artifactId>maven-assembly-plugin</artifactId>
 		    <version>2.4</version>
 		    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
 		    	<finalName>sentiment-soccer</finalName>
 		        <descriptorRefs>
 		            <descriptorRef>jar-with-dependencies</descriptorRef>
