@@ -17,3 +17,5 @@ $ tail -f nohup.out
 1) edit crontab file to schedule crawler_starter.sh to run every 15 minutos 
 $ crontab -e
 #check how it works on http://www.cyberciti.biz/faq/crontab-every-10-min/
+
+2) check log files on ~/logs/
