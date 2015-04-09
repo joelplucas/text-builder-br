@@ -1,4 +1,4 @@
-Step to run Sentiment Soccer on EC2 server
+* Steps to run Sentiment Soccer Manually on EC2 server
 
 -- Crawler --
 1) Populate Team collection on MongoDB:
@@ -11,3 +11,9 @@ $ nohup java -jar sentiment-soccer-jar-with-dependencies.jar &
 $ tail -f nohup.out
 
 
+* Steps to run Sentiment Soccer automatically every 15 minutes (currently is on)
+
+-- Crawler --
+1) edit crontab file to schedule crawler_starter.sh to run every 15 minutos 
+$ crontab -e
+#check how it works on http://www.cyberciti.biz/faq/crontab-every-10-min/
