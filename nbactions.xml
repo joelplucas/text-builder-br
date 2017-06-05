@@ -2,7 +2,6 @@
 <actions>
         <action>
             <actionName>run.single.main</actionName>
-            <recursive>false</recursive>
             <packagings>
                 <packaging>*</packaging>
             </packagings>
@@ -14,7 +13,9 @@
                 <exec.args>-classpath %classpath ${packageClassName} ${cl.args.${className}}</exec.args>
                 <exec.executable>java</exec.executable>
                 <exec.classpathScope>${classPathScope}</exec.classpathScope>
-                <cl.args.App>127.0.0.1</cl.args.App>
+                <cl.args.CharModellingGUI>/Joel/Eventos/JavaOneBR/2016/keynote_thecoder/autores/</cl.args.CharModellingGUI>
+                <cl.args.RunTrainedModel>/Joel/Eventos/JavaOneBR/2016/keynote_thecoder/autores/drummond.txt</cl.args.RunTrainedModel>
+                
             </properties>
         </action>
     </actions>
