@@ -1,12 +1,12 @@
-.DS_Store
-.lck
+.*lck
 .DS_Store
 .classpath
 .project
 .settings/
 .metadata/
 .idea/
-.model
+.*idea
+.*model
 nbproject/
 target/
 nbactions.xml
